@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "ReactNative-sokoban",
+    "slug": "ReactNative-sokoban",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "ReactNative-sokoban"
+}
