@@ -23,7 +23,7 @@ const App = () => {
   const [grid, setGrid] = useState(initialGrid);
 
   const handleMove = (direction) => {
-    /* Your move logic here */
+   
   };
 
 
