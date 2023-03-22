@@ -1,29 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableWithoutFeedback } from 'react-native';
-
-const Header = () => {
-  return (
-    <View>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 20 }}>Sokoban</Text>
-    </View>
-  );
-};
-
-const Grid = ({ grid }) => {
-  return (
-    <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-      {grid.map((row, rowIndex) => (
-        <View key={rowIndex} style={{ flexDirection: 'column' }}>
-          {row.map((cell, cellIndex) => (
-            <Image key={cellIndex} source={{
-              uri: 'https://www.bebegavroche.com/media/catalog/product/cache/1/thumbnail/1200x/040ec09b1e35df139433887a97daa66f/s/c/sc917-figurine-en-carton-shrek-debout-qui-sourit--94--cm-1.jpg',
-            }} style={{ width: 50, height: 50 }} />
-          ))}
-        </View>
-      ))}
-    </View>
-  );
-};
+import { View } from 'react-native';
+import Header from './src/Composants/Header/Header';
+import Grid from './src/Composants/Map/Grid';
+import ArrowButtons from './src/Composants/ArrowsButton/ArrowsButton';
 
 const App = () => {
   const convertGrid = (grid) => {
@@ -47,36 +26,12 @@ const App = () => {
     /* Your move logic here */
   };
 
+
   return (
     <View>
       <Header />
       <Grid grid={grid} />
-      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-        <TouchableWithoutFeedback onPress={() => handleMove('up')}>
-          <Image source={{
-          uri: 'https://www.bebegavroche.com/media/catalog/product/cache/1/thumbnail/1200x/040ec09b1e35df139433887a97daa66f/s/c/sc917-figurine-en-carton-shrek-debout-qui-sourit--94--cm-1.jpg',
-        }} style={{ width: 50, height: 50 }} />
-        </TouchableWithoutFeedback>
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <TouchableWithoutFeedback onPress={() => handleMove('left')}>
-          <Image source={{
-          uri: 'https://www.bebegavroche.com/media/catalog/product/cache/1/thumbnail/1200x/040ec09b1e35df139433887a97daa66f/s/c/sc917-figurine-en-carton-shrek-debout-qui-sourit--94--cm-1.jpg',
-        }} style={{ width: 50, height: 50 }} />
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => handleMove('right')}>
-          <Image source={{
-          uri: 'https://www.bebegavroche.com/media/catalog/product/cache/1/thumbnail/1200x/040ec09b1e35df139433887a97daa66f/s/c/sc917-figurine-en-carton-shrek-debout-qui-sourit--94--cm-1.jpg',
-        }} style={{ width: 50, height: 50 }} />
-        </TouchableWithoutFeedback>
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-        <TouchableWithoutFeedback onPress={() => handleMove('down')}>
-          <Image source={{
-          uri: 'https://www.bebegavroche.com/media/catalog/product/cache/1/thumbnail/1200x/040ec09b1e35df139433887a97daa66f/s/c/sc917-figurine-en-carton-shrek-debout-qui-sourit--94--cm-1.jpg',
-        }} style={{ width: 50, height: 50 }} />
-        </TouchableWithoutFeedback>
-      </View>
+      <ArrowButtons handleMove={handleMove} />
     </View>
   );
 };
