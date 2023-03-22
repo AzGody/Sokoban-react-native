@@ -5,17 +5,21 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use App\Repository\MapRepository;
 use Doctrine\ORM\Mapping as ORM;
-// use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 
 
 #[ORM\Entity(repositoryClass: MapRepository::class)]
 #[ApiResource(
     operations: [
-        // new Get(),
+        new Get(),
         new GetCollection(),
+        new Post(),
+        new Delete()
     ],
 )]
 #[ApiFilter(SearchFilter::class, properties: ['level' => 'exact'])]
