@@ -12,17 +12,37 @@ const App = () => {
     };
 
     const initialGrid = convertGrid([
-        "..#.##...",
-        "###..####",
-        "#.....C.#",
-        "..#..#C..",
-        "#.X.X#P.#",
-        "####....#"
+        "..#.##..",
+        "###...##",
+        "#....V.#",
+        ".#..#V..",
+        ".X.X#P.#",
+        "###....#"
     ]);
 
     const [grid, setGrid] = useState(initialGrid);
 
-    const handleMove = (direction) => {
+
+    const movableItems = {
+        'P' : {
+            'X' : 'Q',
+            '.' : 'P',
+        },
+        'Q' :{
+            'X' : 'Q',
+            '.' : 'P'
+        },
+        'C' : {
+            'X': 'V',
+            '.' : 'C'
+        },
+        'V' : {
+            'X': 'V',
+            '.' : 'C'
+        },
+    }
+
+    const handleMove = async (direction) => {
         let newGrid = [...grid];
         let playerPosition = [];
         let playerState = '';
@@ -31,41 +51,65 @@ const App = () => {
                 if (cell === 'P' || cell === 'Q') {
                     playerPosition = [rowIndex, cellIndex]
                     playerState = cell;
-                    return;
                 }
             });
         })
 
-        let newPositions = [];
-        switch (direction) {
-            case 'left':
-                newPositions = [playerPosition[0] - 1, playerPosition[1]];
-                break;
-            case 'right':
-                newPositions = [playerPosition[0] + 1, playerPosition[1]];
-                break;
-            case 'up':
-                newPositions = [playerPosition[0], playerPosition[1] - 1];
-                break;
-            case 'down':
-                newPositions = [playerPosition[0], playerPosition[1] + 1];
-                break;
-            default:
-                break;
-        }
-
-        if( newPositions[0] < 0 || newPositions[1] < 0 || newGrid[newPositions[0]][newPositions[1]] === '#') {
-            return;
-        } else {
-            newGrid[newPositions[0]][newPositions[1]] = newGrid[newPositions[0]][newPositions[1]] === 'C' ? 'Q' : 'P';
-            newGrid[playerPosition[0]][playerPosition[1]] = playerState === 'P' ? '.' : 'C';
-            setGrid(newGrid);
-        }
+        moveItem(grid, direction, playerPosition).then((isMoved) => {});
     };
 
-    const moveElement = (grid, direction) => {
+    const moveItem = async (grid, direction, initialPosition) => {
+        return new Promise(async (resolve, reject) => {
+            let newPositions = await getNexPosition(direction, initialPosition);
 
+            if (await isEntityCanBeAt(newPositions)) {
+                resolve(false);
+                return false;
+            } else if (grid[newPositions[0]][newPositions[1]] === 'C' || grid[newPositions[0]][newPositions[1]] === 'V') {
+                if(!await moveItem(grid, direction, newPositions)){
+                    resolve(false);
+                    return false;
+                }
+            }
+            const initialPositionState = grid[initialPosition[0]][initialPosition[1]];
+            const newPositionState = grid[newPositions[0]][newPositions[1]];
+
+            let newGrid = [...grid];
+            newGrid[newPositions[0]][newPositions[1]] = movableItems[initialPositionState][newPositionState];
+            newGrid[initialPosition[0]][initialPosition[1]] = initialPositionState === 'V' || initialPositionState === 'Q' ? 'X' : '.';
+            setGrid(newGrid);
+            resolve(true);
+        });
     }
+
+    const getNexPosition = async function (direction, position) {
+        return new Promise((resolve, reject) => {
+            switch (direction) {
+                case 'left':
+                    resolve([position[0] - 1, position[1]]);
+                    break;
+                case 'right':
+                    resolve ([position[0]+ 1, position[1]]);
+                    break;
+                case 'up':
+                    resolve ([position[0], position[1] - 1]);
+                    break;
+                case 'down':
+                    resolve ([position[0], position[1] + 1]);
+                    break;
+                default:
+                    reject ("Direction non reconnue");
+                    break;
+            }
+        });
+    }
+
+    const isEntityCanBeAt = async function (position) {
+        return new Promise((resolve, reject) => {
+            resolve(position[0] < 0 || position[1] < 0 || grid.length - 1 < position[0] || grid[position[0]].length - 1 < position[1] || grid[position[0]][position[1]] === '#');
+        })
+    }
+
 
 
     return (
