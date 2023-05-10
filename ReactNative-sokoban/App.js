@@ -44,16 +44,11 @@ const App = () => {
 
     const handleMove = async (direction) => {
         let newGrid = [...grid];
-        let playerPosition = [];
-        let playerState = '';
-        grid.forEach((row, rowIndex) => {
-            row.forEach((cell, cellIndex) => {
-                if (cell === 'P' || cell === 'Q') {
-                    playerPosition = [rowIndex, cellIndex]
-                    playerState = cell;
-                }
-            });
-        })
+
+        let {success, playerPosition} = await searchFirst(grid, 'QP')
+        if (!success) {
+            return false;
+        }
 
         moveItem(grid, direction, playerPosition).then((isMoved) => {});
     };
@@ -110,7 +105,19 @@ const App = () => {
         })
     }
 
-
+    const searchFirst = async function (grid, search) {
+        return new Promise((resolve, reject) => {
+            grid.forEach((row, rowIndex) => {
+                row.forEach((cell, cellIndex) => {
+                    if (search.includes(cell)) {
+                        console.log('oui');
+                        resolve ({success: true, playerPosition: [rowIndex, cellIndex], playerState: cell});
+                    }
+                });
+            })
+            reject({success: false, playerPosition: [], playerState: ''});
+        });
+    }
 
     return (
         <View>
