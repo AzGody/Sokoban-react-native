@@ -110,7 +110,6 @@ const App = () => {
             grid.forEach((row, rowIndex) => {
                 row.forEach((cell, cellIndex) => {
                     if (search.includes(cell)) {
-                        console.log('oui');
                         resolve ({success: true, playerPosition: [rowIndex, cellIndex], playerState: cell});
                     }
                 });
