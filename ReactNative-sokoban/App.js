@@ -1,124 +1,49 @@
-import React, {useState} from 'react';
-import {View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
 import Header from './src/Composants/Header/Header';
 import Grid from './src/Composants/Map/Grid';
 import ArrowButtons from './src/Composants/ArrowsButton/ArrowsButton';
 
+const convertGrid = (grid) => {
+  return grid.map(row => {
+    return row.split('');
+  });
+};
 const App = () => {
-    const convertGrid = (grid) => {
-        return grid.map(row => {
-            return row.split('').reverse();
-        });
-    };
+  const [maps, setMaps] = useState([]);
+  const [grid, setGrid] = useState([]);
 
-    const initialGrid = convertGrid([
-        "..#.##..",
-        "###...##",
-        "#....V.#",
-        ".#..#V..",
-        ".X.X#P.#",
-        "###....#"
-    ]);
+  useEffect(() => {
+    fetch('http://192.168.231.138:8000/api/maps', {
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => setMaps(data))
+      .catch(error => console.log(error));
+  }, []);
 
-    const [grid, setGrid] = useState(initialGrid);
-
-
-    const movableItems = {
-        'P' : {
-            'X' : 'Q',
-            '.' : 'P',
-        },
-        'Q' :{
-            'X' : 'Q',
-            '.' : 'P'
-        },
-        'C' : {
-            'X': 'V',
-            '.' : 'C'
-        },
-        'V' : {
-            'X': 'V',
-            '.' : 'C'
-        },
+  useEffect(() => {
+    if (maps.length > 0) {
+      setGrid(convertGrid(maps[0].matrix));
     }
-
-    const handleMove = async (direction) => {
-        let newGrid = [...grid];
-        let playerPosition = [];
-        let playerState = '';
-        grid.forEach((row, rowIndex) => {
-            row.forEach((cell, cellIndex) => {
-                if (cell === 'P' || cell === 'Q') {
-                    playerPosition = [rowIndex, cellIndex]
-                    playerState = cell;
-                }
-            });
-        })
-
-        moveItem(grid, direction, playerPosition).then((isMoved) => {});
-    };
-
-    const moveItem = async (grid, direction, initialPosition) => {
-        return new Promise(async (resolve, reject) => {
-            let newPositions = await getNexPosition(direction, initialPosition);
-
-            if (await isEntityCanBeAt(newPositions)) {
-                resolve(false);
-                return false;
-            } else if (grid[newPositions[0]][newPositions[1]] === 'C' || grid[newPositions[0]][newPositions[1]] === 'V') {
-                if(!await moveItem(grid, direction, newPositions)){
-                    resolve(false);
-                    return false;
-                }
-            }
-            const initialPositionState = grid[initialPosition[0]][initialPosition[1]];
-            const newPositionState = grid[newPositions[0]][newPositions[1]];
-
-            let newGrid = [...grid];
-            newGrid[newPositions[0]][newPositions[1]] = movableItems[initialPositionState][newPositionState];
-            newGrid[initialPosition[0]][initialPosition[1]] = initialPositionState === 'V' || initialPositionState === 'Q' ? 'X' : '.';
-            setGrid(newGrid);
-            resolve(true);
-        });
-    }
-
-    const getNexPosition = async function (direction, position) {
-        return new Promise((resolve, reject) => {
-            switch (direction) {
-                case 'left':
-                    resolve([position[0] - 1, position[1]]);
-                    break;
-                case 'right':
-                    resolve ([position[0]+ 1, position[1]]);
-                    break;
-                case 'up':
-                    resolve ([position[0], position[1] - 1]);
-                    break;
-                case 'down':
-                    resolve ([position[0], position[1] + 1]);
-                    break;
-                default:
-                    reject ("Direction non reconnue");
-                    break;
-            }
-        });
-    }
-
-    const isEntityCanBeAt = async function (position) {
-        return new Promise((resolve, reject) => {
-            resolve(position[0] < 0 || position[1] < 0 || grid.length - 1 < position[0] || grid[position[0]].length - 1 < position[1] || grid[position[0]][position[1]] === '#');
-        })
-    }
+  }, [maps]);
 
 
+  const handleMove = (direction) => {
 
-    return (
-        <View>
-            <Header/>
-            <Grid grid={grid}/>
-            <ArrowButtons handleMove={handleMove}/>
-        </View>
-    );
+  };
+
+
+  return (
+    <View>
+      <Header />
+      <Grid grid={grid} />
+      <ArrowButtons handleMove={handleMove} />
+    </View>
+  );
 };
 
 export default App;
