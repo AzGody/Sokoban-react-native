@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { View, Alert } from "react-native";
 import Header from "./src/Composants/Header/Header";
 import Grid from "./src/Composants/Map/Grid";
 import ArrowButtons from "./src/Composants/ArrowsButton/ArrowsButton";
@@ -68,8 +68,9 @@ const App = () => {
       indexMap = indexMap +1;
       if (maps.length > indexMap) {
         setGrid(convertGrid(maps[indexMap].matrix));
+        Alert.alert("Bien joué, on passe au niveau "+ (indexMap+1))
       } else {
-        //ecran de victoire
+        Alert.alert("Vous avez gagné !")
       }
     }
   }
