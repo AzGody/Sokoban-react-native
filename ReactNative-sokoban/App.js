@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Alert } from "react-native";
+import { View, Alert, TouchableOpacity, Image } from "react-native";
 import Header from "./src/Composants/Header/Header";
 import Grid from "./src/Composants/Map/Grid";
 import ArrowButtons from "./src/Composants/ArrowsButton/ArrowsButton";
@@ -148,12 +148,26 @@ const App = () => {
     });
   };
 
+  const reloadLevel = function(){
+    setGrid(convertGrid(maps[indexMap].matrix));
+  }
+
+  retry = 'https://cdn.iconscout.com/icon/free/png-256/retry-1-386755.png?f=webp&w=256'
+  next = 'https://cdn-icons-png.flaticon.com/512/0/304.png'
   return (
-    <View>
-      <Header />
-      <Grid grid={grid} />
-      <ArrowButtons handleMove={handleMove} />
-    </View>
+      <View>
+          <Header />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <TouchableOpacity onPress={reloadLevel}>
+                  <Image
+                      source={{ uri: retry }}
+                      style={{ width: 40, height: 40, margin: 15 }}
+                  />
+              </TouchableOpacity>
+          </View>
+          <Grid grid={grid} />
+          <ArrowButtons handleMove={handleMove} />
+      </View>
   );
 };
 
