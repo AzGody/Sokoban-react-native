@@ -169,6 +169,13 @@ const App = () => {
           <ArrowButtons handleMove={handleMove} />
       </View>
   );
+
+  const getLocalMaps = () => {
+    const maps = JSON.parse(require("./maps.json")).maps
+    const map = maps[Math.floor(Math.random() * maps.length)]
+    console.log(map)
+    setMaps([map]);
+  }
 };
 
 export default App;
